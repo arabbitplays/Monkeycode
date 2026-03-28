@@ -15,7 +15,7 @@
       };
     in pkgs.mkShell {
       packages = with pkgs; [
-
+        clang-tools
       ];
 
       buildInputs = with pkgs; [
