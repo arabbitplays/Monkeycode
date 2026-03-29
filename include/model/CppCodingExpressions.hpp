@@ -2,18 +2,23 @@
 #define MONKEYCODE_CPPCODINGEXPRESSIONS_HPP
 #include "Literal.hpp"
 
-class VariableName final : public Literal {
-public:
-  std::string eval() override;
+class VariableNameLiteral final : public Literal {
+  public:
+    std::string eval() override;
+};
+
+class NumberLiteral final : public Literal {
+  public:
+    std::string eval() override;
 };
 
 class BracketExpression final : public Expression {
-public:
-  std::string eval() override;
+  public:
+    std::string eval() override;
 };
 
 class StartExpression final : public Expression {
-public:
-  std::string eval() override;
+  public:
+    std::string eval() override;
 };
 #endif // MONKEYCODE_CPPCODINGEXPRESSIONS_HPP

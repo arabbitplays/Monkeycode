@@ -5,6 +5,7 @@
 #include <random>
 
 #include "model/Expression.hpp"
+#include "util/RandomUtil.hpp"
 
 class ExpressionGenerator {
 public:
@@ -12,7 +13,7 @@ public:
 
   ExpressionGenerator();
 
-  std::shared_ptr<Expression> generate();
+  std::shared_ptr<Expression> generate(RNG &rng);
 
 private:
   void addGenerator(Generator gen);

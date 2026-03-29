@@ -1,20 +1,21 @@
 #include "generator/ExpressionGenerator.hpp"
 
 #include "model/CppCodingExpressions.hpp"
+#include "util/RandomUtil.hpp"
 
 ExpressionGenerator::ExpressionGenerator() {
-  addGenerator([] { return std::make_shared<VariableName>(); });
+    addGenerator([] { return std::make_shared<VariableNameLiteral>(); });
+    addGenerator([] { return std::make_shared<NumberLiteral>(); });
 }
 
 void ExpressionGenerator::addGenerator(Generator gen) {
-  generators.push_back(std::move(gen));
+    generators.push_back(std::move(gen));
 }
 
-std::shared_ptr<Expression> ExpressionGenerator::generate() {
-  if (generators.empty()) {
-    return nullptr;
-  }
+std::shared_ptr<Expression> ExpressionGenerator::generate(RNG& rng) {
+    if (generators.empty()) {
+        return nullptr;
+    }
 
-  std::uniform_int_distribution<size_t> dist(0, generators.size() - 1);
-  return generators[dist(rng)]();
+    return generators[rng.getUInt(generators.size() - 1)]();
 }
