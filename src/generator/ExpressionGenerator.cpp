@@ -16,6 +16,5 @@ std::shared_ptr<Expression> ExpressionGenerator::generate(RNG& rng) {
     if (generators.empty()) {
         return nullptr;
     }
-
     return generators[rng.getUInt(generators.size() - 1)]();
 }

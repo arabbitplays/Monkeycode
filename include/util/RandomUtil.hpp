@@ -1,6 +1,7 @@
 #ifndef MONKEYCODE_RENDOMUTIL_HPP
 #define MONKEYCODE_RENDOMUTIL_HPP
 
+#include <iostream>
 #include <random>
 
 class RNG {

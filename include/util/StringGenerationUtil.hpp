@@ -2,9 +2,10 @@
 #define MONKEYCODE_STRINGGENERATIONUTIL_HPP
 #include "RandomUtil.hpp"
 
+#include <cassert>
 #include <fstream>
-#include <sstream>
 #include <random>
+#include <sstream>
 #include <string>
 
 class StringGenerationUtil {
@@ -23,6 +24,7 @@ class StringGenerationUtil {
     static std::string randomNWords(RNG &rng, uint32_t N, char separator) {
         std::string result;
         auto word_list = getWordList();
+        assert(!word_list.empty());
 
         result += word_list[rng.getUInt(word_list.size() - 1)];
         for (int i = 1; i < N; ++i) {
