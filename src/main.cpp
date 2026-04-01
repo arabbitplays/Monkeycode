@@ -18,4 +18,5 @@ int main(int argc, char *argv[]) {
 
     ReportPrinter printer{};
     printer.printTestReport(test_report);
+    printer.storeTestResult("../resources/history.csv", test_report);
 }
