@@ -1,3 +1,6 @@
+#include "analysis/ReportPrinter.hpp"
+#include "analysis/TestReportCreator.hpp"
+
 #include <iostream>
 #include <memory>
 
@@ -9,4 +12,10 @@ int main(int argc, char *argv[]) {
     std::string generated_text = start->eval();
     TestRunner runner(generated_text);
     runner.run();
+
+    TestReportCreator test_report_creator{};
+    std::shared_ptr<Report> test_report = test_report_creator.createReport(runner.getWordSet(), runner.getDuration());
+
+    ReportPrinter printer{};
+    printer.printTestReport(test_report);
 }

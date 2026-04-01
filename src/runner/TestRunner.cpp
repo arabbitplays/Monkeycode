@@ -1,6 +1,7 @@
 #include "../../include/runner/TestRunner.hpp"
 
 #include <cassert>
+#include <chrono>
 #include <iostream>
 #include <termios.h>
 #include <unistd.h>
@@ -25,14 +26,12 @@ char getch() {
 TestRunner::TestRunner(const std::string &test_text) { initCharSet(test_text); }
 
 void TestRunner::run() {
+    auto start = std::chrono::high_resolution_clock::now();
 
     while (curr_word != word_set.size() - 1 ||
            curr_char != word_set[word_set.size() - 1].char_nodes.size()) {
-        clearScreen();
-        moveTerminalCursorPos({1, 1});
-        for (const auto &word_node : word_set) {
-            printWordNode(word_node);
-        }
+
+        refreshText();
         adjustCursorPosToCurrChar();
 
         char c = getch();
@@ -68,7 +67,20 @@ void TestRunner::run() {
             }
         }
     }
-    std::cout << std::endl;
+    refreshText();
+    std::cout << "\n\n" << std::endl;
+
+    auto end = std::chrono::high_resolution_clock::now();
+    duration =
+        std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+}
+
+void TestRunner::refreshText() {
+    clearScreen();
+    moveTerminalCursorPos({1, 1});
+    for (const auto &word_node : word_set) {
+        printWordNode(word_node);
+    }
 }
 
 CharNode &TestRunner::getCurrCharNode() {
@@ -145,7 +157,7 @@ void TestRunner::initCharSet(const std::string &test_text) {
     }
 }
 
-void TestRunner::adjustCursorPosToCurrChar() {
+void TestRunner::adjustCursorPosToCurrChar() const {
     uint32_t x = 1;
     uint32_t y = 1;
     for (uint32_t i = 0;
@@ -193,3 +205,7 @@ void TestRunner::printCharNode(const CharNode &node) {
 }
 
 void TestRunner::clearScreen() { std::cout << "\033[2J\033[H" << std::flush; }
+
+WordSet TestRunner::getWordSet() { return word_set; }
+
+Milliseconds TestRunner::getDuration() { return duration; }
