@@ -23,7 +23,7 @@ std::string BracketExpression::eval() {
 
 std::string StartExpression::eval() {
     std::string result = "";
-    for (uint32_t i = 0; i < 10; i++) {
+    for (uint32_t i = 0; i < 3; i++) {
         std::shared_ptr<Expression> expr = std::make_shared<BracketExpression>();
         result += expr->eval() + "\n";
     }

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-enum CharState { UNWRITTEN = 0, CORRECT, FALSE, JUMPED_OVER };
+enum CharState { UNWRITTEN = 0, CORRECT, FALSE, JUMPED_OVER, OVERFLOW };
 
 struct CharNode {
     char c;
@@ -15,7 +15,6 @@ struct CharNode {
 struct WordNode {
     std::vector<CharNode> char_nodes;
     CharNode last_char;
-    std::vector<CharNode> overflow_nodes;
 };
 
 typedef std::vector<WordNode> WordSet;
@@ -27,7 +26,7 @@ class TestRunner {
 
     void run();
     CharNode &getCurrCharNode();
-    CharNode &nextCharNode(bool skipOverflow);
+    CharNode &nextCharNode();
     CharNode &prevCharNode();
     void moveToNextWord();
     void moveToNextLine();

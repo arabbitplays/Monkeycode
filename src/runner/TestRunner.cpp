@@ -1,4 +1,6 @@
 #include "../../include/runner/TestRunner.hpp"
+
+#include <cassert>
 #include <iostream>
 #include <termios.h>
 #include <unistd.h>
@@ -23,10 +25,10 @@ char getch() {
 TestRunner::TestRunner(const std::string &test_text) { initCharSet(test_text); }
 
 void TestRunner::run() {
-    clearScreen();
 
     while (curr_word != word_set.size() - 1 ||
-           curr_char == word_set[word_set.size() - 1].char_nodes.size()) {
+           curr_char != word_set[word_set.size() - 1].char_nodes.size()) {
+        clearScreen();
         moveTerminalCursorPos({1, 1});
         for (const auto &word_node : word_set) {
             printWordNode(word_node);
@@ -39,35 +41,46 @@ void TestRunner::run() {
         if (c == currCharNode.c) {
             currCharNode.state = CORRECT;
             currCharNode.written_c = c;
-            nextCharNode(true);
+            nextCharNode();
         } else if (c == 127 || c == '\b') {
             prevCharNode();
-            moveBack();
-            CharNode &node = getCurrCharNode();
-            node.state = UNWRITTEN;
+            if (getCurrCharNode().state == OVERFLOW) {
+                word_set[curr_word].char_nodes.pop_back();
+            } else {
+                moveBack();
+                CharNode &node = getCurrCharNode();
+                node.state = UNWRITTEN;
+            }
         } else {
             if (c == ' ') {
                 moveToNextWord();
             } else if (c == '\n') {
                 moveToNextLine();
             } else {
-                currCharNode.state = FALSE;
-                currCharNode.written_c = c;
-                curr_char++;
+                if (curr_char == word_set[curr_word].char_nodes.size()) {
+                    word_set[curr_word].char_nodes.push_back({c, c, OVERFLOW});
+                    nextCharNode();
+                } else {
+                    currCharNode.state = FALSE;
+                    currCharNode.written_c = c;
+                    nextCharNode();
+                }
             }
         }
     }
+    std::cout << std::endl;
 }
 
 CharNode &TestRunner::getCurrCharNode() {
-    if (curr_char >= word_set[curr_word].char_nodes.size()) {
+    assert(curr_char <= word_set[curr_word].char_nodes.size());
+    if (curr_char == word_set[curr_word].char_nodes.size()) {
         return word_set[curr_word].last_char;
     }
     return word_set[curr_word].char_nodes[curr_char];
 }
 
-CharNode &TestRunner::nextCharNode(bool skipOverflow) {
-    if (skipOverflow && curr_char >= word_set[curr_word].char_nodes.size()) {
+CharNode &TestRunner::nextCharNode() {
+    if (curr_char == word_set[curr_word].char_nodes.size()) {
         curr_word++;
         curr_char = 0;
     } else {
@@ -115,17 +128,17 @@ void TestRunner::moveBack() {
         moved = true;
     }
 
-    if (moved && (curr_char != 0 || curr_word != 0)) {
-        nextCharNode(true);
+    if (moved && getCurrCharNode().state != UNWRITTEN) {
+        nextCharNode();
     }
 }
 
 void TestRunner::initCharSet(const std::string &test_text) {
-    word_set.push_back({{}, {}, {}});
+    word_set.push_back({{}, {}});
     for (const auto &c : test_text) {
         if (c == ' ' || c == '\n') {
             word_set[word_set.size() - 1].last_char = {c, UNWRITTEN};
-            word_set.push_back({{}, {}, {}});
+            word_set.push_back({{}, {}});
         } else {
             word_set[word_set.size() - 1].char_nodes.push_back({c, UNWRITTEN});
         }
@@ -167,12 +180,12 @@ void TestRunner::printCharNode(const CharNode &node) {
     case CORRECT:
         std::cout << "\033[32m" << node.written_c << "\033[0m";
         break;
-    case FALSE: {
-        std::string char_to_print =
-            node.written_c == ' ' ? "█" : std::string(1, node.written_c);
-        std::cout << "\033[31m" << char_to_print << "\033[0m";
+    case FALSE:
+        std::cout << "\033[31m" << node.written_c << "\033[0m";
         break;
-    }
+    case OVERFLOW:
+        std::cout << "\033[34m" << node.written_c << "\033[0m";
+        break;
     case JUMPED_OVER:
         std::cout << "\033[33m" << node.c << "\033[0m";
         break;
