@@ -12,7 +12,13 @@ struct CharNode {
     CharState state;
 };
 
-typedef std::vector<CharNode> CharSet;
+struct WordNode {
+    std::vector<CharNode> char_nodes;
+    CharNode last_char;
+    std::vector<CharNode> overflow_nodes;
+};
+
+typedef std::vector<WordNode> WordSet;
 typedef std::pair<uint32_t, uint32_t> UVec2;
 
 class TestRunner {
@@ -20,6 +26,9 @@ class TestRunner {
     explicit TestRunner(const std::string &test_text);
 
     void run();
+    CharNode &getCurrCharNode();
+    CharNode &nextCharNode(bool skipOverflow);
+    CharNode &prevCharNode();
     void moveToNextWord();
     void moveToNextLine();
     void moveBack();
@@ -28,12 +37,14 @@ class TestRunner {
     void initCharSet(const std::string &test_text);
     void adjustCursorPosToCurrChar();
     static void moveTerminalCursorPos(UVec2 pos);
+    void printWordNode(const WordNode &node);
     void printCharNode(const CharNode &node);
     static void clearScreen();
 
-    CharSet char_set{};
+    WordSet word_set{};
     UVec2 cursor_pos{ 1, 1 };
     uint32_t curr_char = 0;
+    uint32_t curr_word = 0;
 };
 
 #endif // MONKEYCODE_TESTRUNNER_HPP

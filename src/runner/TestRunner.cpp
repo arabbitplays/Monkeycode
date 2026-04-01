@@ -25,86 +25,138 @@ TestRunner::TestRunner(const std::string &test_text) { initCharSet(test_text); }
 void TestRunner::run() {
     clearScreen();
 
-    while (curr_char != char_set.size()) {
+    while (curr_word != word_set.size() - 1 ||
+           curr_char == word_set[word_set.size() - 1].char_nodes.size()) {
         moveTerminalCursorPos({1, 1});
-        for (const auto &char_node : char_set) {
-            printCharNode(char_node);
+        for (const auto &word_node : word_set) {
+            printWordNode(word_node);
         }
         adjustCursorPosToCurrChar();
 
         char c = getch();
 
-        if (c == char_set[curr_char].c) {
-            char_set[curr_char].state = CORRECT;
-            char_set[curr_char].written_c = c;
-            curr_char++;
+        CharNode &currCharNode = getCurrCharNode();
+        if (c == currCharNode.c) {
+            currCharNode.state = CORRECT;
+            currCharNode.written_c = c;
+            nextCharNode(true);
         } else if (c == 127 || c == '\b') {
-            curr_char--;
-            char_set[curr_char].state = UNWRITTEN;
+            prevCharNode();
             moveBack();
+            CharNode &node = getCurrCharNode();
+            node.state = UNWRITTEN;
         } else {
-
             if (c == ' ') {
                 moveToNextWord();
             } else if (c == '\n') {
                 moveToNextLine();
             } else {
-                char_set[curr_char].state = FALSE;
-                char_set[curr_char].written_c = c;
+                currCharNode.state = FALSE;
+                currCharNode.written_c = c;
                 curr_char++;
             }
         }
     }
 }
 
-void TestRunner::moveToNextWord() {
-    while (char_set[curr_char].c != ' ') {
-        char_set[curr_char].state = JUMPED_OVER;
+CharNode &TestRunner::getCurrCharNode() {
+    if (curr_char >= word_set[curr_word].char_nodes.size()) {
+        return word_set[curr_word].last_char;
+    }
+    return word_set[curr_word].char_nodes[curr_char];
+}
+
+CharNode &TestRunner::nextCharNode(bool skipOverflow) {
+    if (skipOverflow && curr_char >= word_set[curr_word].char_nodes.size()) {
+        curr_word++;
+        curr_char = 0;
+    } else {
         curr_char++;
     }
-    char_set[curr_char].state = JUMPED_OVER;
-    curr_char++;
+    return getCurrCharNode();
+}
+
+CharNode &TestRunner::prevCharNode() {
+    if (curr_char == 0) {
+        if (curr_word == 0)
+            return getCurrCharNode();
+
+        curr_word--;
+        curr_char = word_set[curr_word].char_nodes.size();
+    } else {
+        curr_char--;
+    }
+    return getCurrCharNode();
+}
+
+void TestRunner::moveToNextWord() {
+    for (auto &char_node : word_set[curr_word].char_nodes) {
+        if (char_node.state == UNWRITTEN) {
+            char_node.state = JUMPED_OVER;
+        }
+    }
+    word_set[curr_word].last_char.state = JUMPED_OVER;
+    curr_word++;
+    curr_char = 0;
 }
 
 void TestRunner::moveToNextLine() {
-     while (char_set[curr_char].c != '\n') {
-        char_set[curr_char].state = JUMPED_OVER;
-        curr_char++;
+    while (word_set[curr_word].last_char.c != '\n') {
+        moveToNextWord();
     }
-    char_set[curr_char].state = JUMPED_OVER;
-    curr_char++;
+    moveToNextWord();
 }
 
 void TestRunner::moveBack() {
-    while (curr_char != 0 && char_set[curr_char - 1].state == JUMPED_OVER) {
-        curr_char--;
-        char_set[curr_char].state = UNWRITTEN;
+    bool moved = false;
+    while (getCurrCharNode().state == JUMPED_OVER) {
+        getCurrCharNode().state = UNWRITTEN;
+        prevCharNode();
+        moved = true;
+    }
+
+    if (moved && (curr_char != 0 || curr_word != 0)) {
+        nextCharNode(true);
     }
 }
 
 void TestRunner::initCharSet(const std::string &test_text) {
-    char_set.reserve(test_text.size());
+    word_set.push_back({{}, {}, {}});
     for (const auto &c : test_text) {
-        char_set.push_back({c, UNWRITTEN});
+        if (c == ' ' || c == '\n') {
+            word_set[word_set.size() - 1].last_char = {c, UNWRITTEN};
+            word_set.push_back({{}, {}, {}});
+        } else {
+            word_set[word_set.size() - 1].char_nodes.push_back({c, UNWRITTEN});
+        }
     }
 }
 
 void TestRunner::adjustCursorPosToCurrChar() {
     uint32_t x = 1;
     uint32_t y = 1;
-    for (uint32_t i = 0; i < curr_char; i++) {
-        if (char_set[i].c == '\n') {
+    for (uint32_t i = 0;
+         static_cast<int32_t>(i) < static_cast<int32_t>(curr_word); i++) {
+        if (word_set[i].last_char.c == '\n') {
             y++;
             x = 1;
         } else {
-            x++;
+            x += word_set[i].char_nodes.size() + 1;
         }
     }
+    x += curr_char;
     moveTerminalCursorPos({x, y});
 }
 
 void TestRunner::moveTerminalCursorPos(UVec2 pos) {
     std::cout << "\033[" << pos.second << ";" << pos.first << "H" << std::flush;
+}
+
+void TestRunner::printWordNode(const WordNode &node) {
+    for (const auto &c : node.char_nodes) {
+        printCharNode(c);
+    }
+    printCharNode(node.last_char);
 }
 
 void TestRunner::printCharNode(const CharNode &node) {
