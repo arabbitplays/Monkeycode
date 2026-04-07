@@ -12,7 +12,7 @@ void ExpressionGenerator::addGenerator(Generator gen) {
     generators.push_back(std::move(gen));
 }
 
-std::shared_ptr<Expression> ExpressionGenerator::generate(RNG& rng) {
+std::shared_ptr<Expression> ExpressionGenerator::generate(RNG &rng) {
     if (generators.empty()) {
         return nullptr;
     }

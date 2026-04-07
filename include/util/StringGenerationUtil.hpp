@@ -35,19 +35,15 @@ class StringGenerationUtil {
     }
 
     static std::pair<std::string, std::string> randomBracketPair(RNG &rng) {
-        std::vector<std::pair<std::string, std::string>> brackets {
-            { "{", "}" },
-            { "(", ")" },
-            { "[", "]" },
-            { "<", ">" },
-            { "\'", "\'" },
-            { "\"", "\"" },
+        std::vector<std::pair<std::string, std::string>> brackets{
+            {"{", "}"}, {"(", ")"},   {"[", "]"},
+            {"<", ">"}, {"\'", "\'"}, {"\"", "\""},
         };
 
         return brackets[rng.getUInt(brackets.size() - 1)];
     }
 
-private:
+  private:
     static std::vector<std::string> &getWordList() {
         static std::vector<std::string> lines = []() {
             std::ifstream file("../resources/eng_10000.txt");

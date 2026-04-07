@@ -6,11 +6,12 @@
 #include <memory>
 
 class ReportPrinter {
-    public:
+  public:
     ReportPrinter() = default;
 
-    void printTestReport(const std::shared_ptr<Report> &report);
-    void storeTestResult(const std::filesystem::path &storage_file, const std::shared_ptr<Report> &report);
+    static void printTestReport(const std::shared_ptr<Report> &report);
+    static void storeTestResult(const std::filesystem::path &storage_file,
+                                const std::shared_ptr<Report> &report);
 };
 
 #endif // MONKEYCODE_REPORTPRINTER_HPP

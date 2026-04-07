@@ -8,18 +8,18 @@
 #include "util/RandomUtil.hpp"
 
 class ExpressionGenerator {
-public:
-  using Generator = std::function<std::shared_ptr<Expression>()>;
+  public:
+    using Generator = std::function<std::shared_ptr<Expression>()>;
 
-  ExpressionGenerator();
+    ExpressionGenerator();
 
-  std::shared_ptr<Expression> generate(RNG &rng);
+    std::shared_ptr<Expression> generate(RNG &rng);
 
-private:
-  void addGenerator(Generator gen);
+  private:
+    void addGenerator(Generator gen);
 
-  std::vector<Generator> generators;
-  std::mt19937 rng;
+    std::vector<Generator> generators;
+    std::mt19937 rng;
 };
 
 #endif // MONKEYCODE_EXPRESSIONGENERATOR_HPP

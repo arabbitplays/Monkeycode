@@ -14,7 +14,8 @@ int main(int argc, char *argv[]) {
     runner.run();
 
     TestReportCreator test_report_creator{};
-    std::shared_ptr<Report> test_report = test_report_creator.createReport(runner.getWordSet(), runner.getDuration());
+    std::shared_ptr<Report> test_report = test_report_creator.createReport(
+        runner.getWordSet(), runner.getDuration());
 
     ReportPrinter printer{};
     printer.printTestReport(test_report);

@@ -37,8 +37,8 @@ std::shared_ptr<Report> TestReportCreator::createReport(const WordSet &word_set,
                                  report->missing_char_count;
     report->accuracy = static_cast<float>(report->correct_char_count) /
                        static_cast<float>(report->char_count);
-    report->cpm = static_cast<float>(report->correct_char_count) * 60000.0f /
-                     static_cast<float>(report->time.count());
+    report->cpm = static_cast<float>(report->correct_char_count) * 60000.0F /
+                  static_cast<float>(report->time.count());
 
     return report;
 }

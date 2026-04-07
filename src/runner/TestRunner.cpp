@@ -103,8 +103,9 @@ CharNode &TestRunner::nextCharNode() {
 
 CharNode &TestRunner::prevCharNode() {
     if (curr_char == 0) {
-        if (curr_word == 0)
+        if (curr_word == 0) {
             return getCurrCharNode();
+        }
 
         curr_word--;
         curr_char = word_set[curr_word].char_nodes.size();
