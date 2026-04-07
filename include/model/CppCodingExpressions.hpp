@@ -12,6 +12,11 @@ class NumberLiteral final : public Literal {
     std::string eval() override;
 };
 
+class EquationExpression final : public Expression {
+  public:
+    std::string eval() override;
+};
+
 class BracketExpression final : public Expression {
   public:
     std::string eval() override;
