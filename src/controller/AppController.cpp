@@ -1,10 +1,12 @@
 #include "../../include/controller/AppController.hpp"
 
+#include "analysis/HistoryAnalyzer.hpp"
 #include "analysis/TestReportCreator.hpp"
 #include "generator/ExpressionGenerator.hpp"
 #include "io/ReportPrinter.hpp"
 #include "io/TestHistoryLoader.hpp"
 #include "model/CppCodingExpressions.hpp"
+#include "rendering/GraphRenderer.hpp"
 #include "runner/TestRunner.hpp"
 
 AppController::AppController() {
@@ -33,4 +35,10 @@ void AppController::renderHistoryAnalysis() {
     TestHistoryLoader loader(history_file);
     std::shared_ptr<TestHistory> history = loader.load();
 
+    HistoryAnalyzer history_analyzer{};
+    GraphHandle graph = history_analyzer.getCpmGraph(history);
+
+    GraphRenderer renderer({500, 300});
+    renderer.renderGraph(graph);
+    renderer.outputCanvas(".");
 }

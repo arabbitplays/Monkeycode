@@ -23,7 +23,6 @@ exe = executable(
     sources: src,
 
     dependencies: [
-
     ],
     include_directories: incdirs,
     install : true,
