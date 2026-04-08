@@ -1,15 +1,18 @@
 #ifndef MONKEYCODE_RENDEROBJECTS_HPP
 #define MONKEYCODE_RENDEROBJECTS_HPP
-#include "util/vectors/IVec2.hpp"
+#include "Canvas.hpp"
+#include "util/vectors/Vec2.hpp"
 
 struct RenderPoint {
-    IVec2 pos;
+    Vec2 pos;
     float radius;
+    Color color;
 };
 
 struct Line {
-    IVec2 start;
-    IVec2 end;
+    Vec2 start;
+    Vec2 end;
     float thickness;
+    Color color;
 };
 #endif // MONKEYCODE_RENDEROBJECTS_HPP
