@@ -1,4 +1,6 @@
-#include "../../include/analysis/ReportPrinter.hpp"
+#include "../../include/io/ReportPrinter.hpp"
+
+#include "model/ReportDto.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -23,13 +25,24 @@ void ReportPrinter::printTestReport(const std::shared_ptr<Report> &report) {
 
 void ReportPrinter::storeTestResult(const std::filesystem::path &storage_file,
                                     const std::shared_ptr<Report> &report) {
-
     std::ofstream file(storage_file, std::ios::app);
     if (!file) {
         throw std::runtime_error("Failed to open file");
     }
 
-    file << report->cpm << "," << report->accuracy << ","
-         << report->extra_char_count << "," << report->missing_char_count
+    ReportDto dto{
+        TimeUtil::formatTimePoint(report->time_stamp),
+        report->cpm,
+        report->accuracy,
+        report->extra_char_count,
+        report->missing_char_count,
+    };
+
+    writeReportDto(std::move(file), dto);
+}
+
+void ReportPrinter::writeReportDto(std::ofstream file, ReportDto& report) {
+    file << report.timestamp << "," << report.cpm << "," << report.accuracy << ","
+         << report.extra_char_count << "," << report.missing_char_count
          << "\n";
 }

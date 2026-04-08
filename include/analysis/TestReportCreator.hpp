@@ -10,7 +10,7 @@ class TestReportCreator {
     TestReportCreator() = default;
 
     static std::shared_ptr<Report> createReport(const WordSet &word_set,
-                                                Milliseconds time);
+                                                Milliseconds duration);
 };
 
 #endif // MONKEYCODE_TESTREPORTCREATER_HPP

@@ -3,9 +3,10 @@
 #include <cassert>
 
 std::shared_ptr<Report> TestReportCreator::createReport(const WordSet &word_set,
-                                                        Milliseconds time) {
+                                                        Milliseconds duration) {
     auto report = std::make_shared<Report>();
-    report->time = time;
+    report->time_stamp = TimeUtil::getTimeStamp();
+    report->duration = duration;
     report->word_count = word_set.size();
 
     for (const auto &word_node : word_set) {
@@ -38,7 +39,7 @@ std::shared_ptr<Report> TestReportCreator::createReport(const WordSet &word_set,
     report->accuracy = static_cast<float>(report->correct_char_count) /
                        static_cast<float>(report->char_count);
     report->cpm = static_cast<float>(report->correct_char_count) * 60000.0F /
-                  static_cast<float>(report->time.count());
+                  static_cast<float>(report->duration.count());
 
     return report;
 }

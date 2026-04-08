@@ -1,5 +1,7 @@
 #ifndef MONKEYCODE_TESTRUNNER_HPP
 #define MONKEYCODE_TESTRUNNER_HPP
+#include "util/TimeUtil.hpp"
+
 #include <chrono>
 #include <cstdint>
 #include <string>
@@ -20,8 +22,6 @@ struct WordNode {
 
 typedef std::vector<WordNode> WordSet;
 typedef std::pair<uint32_t, uint32_t> UVec2;
-
-typedef std::chrono::milliseconds Milliseconds;
 
 class TestRunner {
   public:
