@@ -1,13 +1,12 @@
 #ifndef MONKEYCODE_CANVAS_HPP
 #define MONKEYCODE_CANVAS_HPP
+#include "rendering/util/ColorUtil.hpp"
 #include "util/vectors/IVec2.hpp"
 #include "util/vectors/Vec3.hpp"
 
 #include <cassert>
 #include <memory>
 #include <vector>
-
-typedef Vec3 Color;
 
 struct Canvas {
     IVec2 extent;

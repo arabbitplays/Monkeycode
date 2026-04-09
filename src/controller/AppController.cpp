@@ -38,7 +38,7 @@ void AppController::renderHistoryAnalysis() {
     HistoryAnalyzer history_analyzer{};
     GraphHandle graph = history_analyzer.getCpmGraph(history);
 
-    GraphRenderer renderer({500, 300});
+    GraphRenderer renderer({1000, 600});
     renderer.renderGraph(graph);
     renderer.outputCanvas(".");
 }

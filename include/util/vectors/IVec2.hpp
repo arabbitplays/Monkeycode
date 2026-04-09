@@ -1,6 +1,9 @@
 #ifndef IVEC2_HPP
 #define IVEC2_HPP
 
+#include "Vec2.hpp"
+
+#include <cmath>
 #include <functional>
 #include <stdexcept>
 

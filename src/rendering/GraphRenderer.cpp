@@ -1,6 +1,7 @@
 #include "../../include/rendering/GraphRenderer.hpp"
 
 #include "io/ImageWriter.hpp"
+#include "rendering/model/Frame.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -10,25 +11,27 @@ GraphRenderer::GraphRenderer(const IVec2 &canvas_size) {
 }
 
 void GraphRenderer::renderGraph(const GraphHandle &graph) {
-    Color color = Vec3(0.8, 0, 0);
     std::vector<Vec2> points = convertGraphPointsToCanvasSpace(graph);
     for (uint32_t i = 0; i < points.size() - 1; i++) {
-        RenderLine line = {points[i], points[i + 1], 0, color};
+        RenderLine line = {points[i], points[i + 1], 1, primary_dark_color};
         renderLine(line);
+    }
+
+    for (uint32_t i = 0; i < points.size(); i++) {
+        RenderPoint point = {points[i], 3, primary_light_color};
+        renderPoint(point);
     }
 }
 
 std::vector<Vec2>
 GraphRenderer::convertGraphPointsToCanvasSpace(const GraphHandle &graph) {
-    Vec2 graph_extent = graph->getExtent();
+    Vec2 margin(50.0f);
     std::vector<Vec2> canvas_points{};
     canvas_points.reserve(graph->points.size());
+    Frame frame{Vec2(margin), graph->getExtent()};
     for (const auto &point : graph->points) {
-        canvas_points.emplace_back(
-            static_cast<float>(point.x) / graph_extent.x *
-                static_cast<float>(canvas->extent.x - 1),
-            static_cast<float>(point.y) / graph_extent.y *
-                static_cast<float>(canvas->extent.y - 1));
+        canvas_points.push_back(frame.convert(
+            asVec2(point), asVec2(canvas->extent) - (2 * margin)));
     }
     return canvas_points;
 }
@@ -43,7 +46,7 @@ void GraphRenderer::renderPoint(const RenderPoint &point) {
             float dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
             float alpha = 1.0f - std::clamp(dist - point.radius, 0.0f, 1.0f);
 
-            IVec2 pixel_pos = IVec2(std::round(pixel.x), std::round(pixel.y));
+            IVec2 pixel_pos = asIVec2(pixel);
             if (!canvas->isValidPixel(pixel_pos)) {
                 continue;
             }
@@ -95,4 +98,14 @@ IVec2 GraphRenderer::clampToCanvas(IVec2 point) {
 void GraphRenderer::outputCanvas(const std::filesystem::path &output_path) {
     std::filesystem::path output_file = output_path / "graph.ppm";
     ImageWriter::writePPM(output_file, canvas->pixels, canvas->extent);
+}
+
+IVec2 GraphRenderer::asIVec2(Vec2 v) {
+
+    return IVec2{static_cast<int32_t>(std::round(v.x)),
+                 static_cast<int32_t>(std::round(v.y))};
+}
+
+Vec2 GraphRenderer::asVec2(IVec2 v) {
+    return Vec2{static_cast<float>(v.x), static_cast<float>(v.y)};
 }
