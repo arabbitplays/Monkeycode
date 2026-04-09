@@ -15,7 +15,8 @@ class GraphRenderer {
     std::vector<Vec2> convertGraphPointsToCanvasSpace(const GraphHandle &graph);
     void outputCanvas(const std::filesystem::path &output_path);
   private:
-    void renderLine(const Line &line);
+    void renderPoint(const RenderPoint &point);
+    void renderLine(const RenderLine &line);
     void renderDot(const Vec2 &pos, const Color &color);
     IVec2 clampToCanvas(IVec2 point);
 

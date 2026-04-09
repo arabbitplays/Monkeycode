@@ -9,7 +9,7 @@ struct RenderPoint {
     Color color;
 };
 
-struct Line {
+struct RenderLine {
     Vec2 start;
     Vec2 end;
     float thickness;

@@ -29,6 +29,10 @@ struct Canvas {
         uint32_t idx = (extent.y - pos.y - 1) * extent.x + pos.x;
         pixels[idx] = color * alpha + pixels[idx] * (1.0f - alpha);
     }
+
+    bool isValidPixel(const IVec2& pos) const {
+        return pos.x >= 0 && pos.x < extent.x && pos.y >= 0 && pos.y < extent.y;
+    }
 };
 
 typedef std::shared_ptr<Canvas> CanvasHandle;
