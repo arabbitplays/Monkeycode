@@ -7,11 +7,16 @@
 
 #include <filesystem>
 
+enum GraphRenderMode {
+    POINTS = 0,
+    LINES = 1,
+    BOX_LINES = 2,
+};
 class GraphRenderer {
   public:
     GraphRenderer(const IVec2 &canvas_size);
 
-    void renderGraph(const GraphHandle &graph);
+    void renderGraph(const GraphHandle &graph, GraphRenderMode mode);
     std::vector<Vec2> convertGraphPointsToCanvasSpace(const GraphHandle &graph);
     void outputCanvas(const std::filesystem::path &output_path);
     IVec2 asIVec2(Vec2 v);
@@ -25,6 +30,7 @@ class GraphRenderer {
 
     CanvasHandle canvas;
 
+    // https://lospec.com/palette-list/elixir
     const Color primary_dark_color = ColorUtil::fromHexString("#9c4ab5");
     const Color primary_light_color = ColorUtil::fromHexString("#b185d1");
     const Color secondary_dark_color = ColorUtil::fromHexString("#430f40");

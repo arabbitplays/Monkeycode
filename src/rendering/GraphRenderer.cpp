@@ -10,16 +10,31 @@ GraphRenderer::GraphRenderer(const IVec2 &canvas_size) {
     canvas = std::make_shared<Canvas>(canvas_size, Vec3(0.2f));
 }
 
-void GraphRenderer::renderGraph(const GraphHandle &graph) {
+void GraphRenderer::renderGraph(const GraphHandle &graph,
+                                GraphRenderMode mode) {
     std::vector<Vec2> points = convertGraphPointsToCanvasSpace(graph);
-    for (uint32_t i = 0; i < points.size() - 1; i++) {
-        RenderLine line = {points[i], points[i + 1], 1, primary_dark_color};
-        renderLine(line);
-    }
 
-    for (uint32_t i = 0; i < points.size(); i++) {
-        RenderPoint point = {points[i], 3, primary_light_color};
-        renderPoint(point);
+    switch (mode) {
+    case POINTS:
+        for (uint32_t i = 0; i < points.size(); i++) {
+            RenderPoint point = {points[i], 3, primary_light_color};
+            renderPoint(point);
+        }
+        break;
+    case LINES:
+        for (uint32_t i = 0; i < points.size() - 1; i++) {
+            RenderLine line = {points[i], points[i + 1], 1, primary_dark_color};
+            renderLine(line);
+        }
+        break;
+    case BOX_LINES:
+        for (uint32_t i = 0; i < points.size() - 1; i++) {
+            RenderLine horiz_line = {points[i], Vec2{points[i + 1].x, points[i].y}, 1, secondary_dark_color};
+            renderLine(horiz_line);
+            RenderLine vert_line = {Vec2(points[i + 1].x, points[i].y), points[i + 1], 1, secondary_dark_color};
+            renderLine(vert_line);
+        }
+        break;
     }
 }
 
