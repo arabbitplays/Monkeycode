@@ -20,12 +20,11 @@ void AppController::init() {
 void AppController::executeTest() {
     std::shared_ptr<Expression> start = std::make_shared<StartExpression>();
     std::string generated_text = start->eval();
-    TestRunner runner(generated_text);
-    runner.run();
+    TestRunner runner{};
+    TestResult result = runner.run(generated_text);
 
     TestReportCreator test_report_creator{};
-    std::shared_ptr<Report> test_report = test_report_creator.createReport(
-        runner.getWordSet(), runner.getDuration());
+    std::shared_ptr<Report> test_report = test_report_creator.createReport(result);
 
     ReportPrinter printer{};
     printer.printTestReport(test_report);

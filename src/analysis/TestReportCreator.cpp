@@ -2,14 +2,13 @@
 
 #include <cassert>
 
-std::shared_ptr<Report> TestReportCreator::createReport(const WordSet &word_set,
-                                                        Milliseconds duration) {
+std::shared_ptr<Report> TestReportCreator::createReport(const TestResult& result) {
     auto report = std::make_shared<Report>();
     report->time_stamp = TimeUtil::getTimeStamp();
-    report->duration = duration;
-    report->word_count = word_set.size();
+    report->duration = result.duration;
+    report->word_count = result.word_set.size();
 
-    for (const auto &word_node : word_set) {
+    for (const auto &word_node : result.word_set) {
         for (const auto &char_node : word_node.char_nodes) {
             if (char_node.state != OVERFLOW) {
                 report->char_count++;
@@ -36,8 +35,7 @@ std::shared_ptr<Report> TestReportCreator::createReport(const WordSet &word_set,
 
     report->correct_char_count = report->char_count - report->wrong_char_count -
                                  report->missing_char_count;
-    report->accuracy = static_cast<float>(report->correct_char_count) /
-                       static_cast<float>(report->char_count);
+    report->accuracy = result.accuracy;
     report->cpm = static_cast<float>(report->correct_char_count) * 60000.0F /
                   static_cast<float>(report->duration.count());
 

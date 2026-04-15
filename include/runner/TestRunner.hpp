@@ -23,17 +23,23 @@ struct WordNode {
 typedef std::vector<WordNode> WordSet;
 typedef std::pair<uint32_t, uint32_t> UVec2;
 
+struct TestResult {
+    WordSet word_set;
+    Milliseconds duration;
+    float accuracy;
+};
+
 class TestRunner {
   public:
-    explicit TestRunner(const std::string &test_text);
+    TestRunner() = default;
 
-    void run();
-    void refreshText();
-    WordSet getWordSet();
-    Milliseconds getDuration();
+    TestResult run(const std::string &test_string);
 
   private:
-    void initCharSet(const std::string &test_text);
+    void resetCursors();
+    void initWordSet(const std::string &test_text);
+
+    void refreshText();
 
     CharNode &getCurrCharNode();
     CharNode &nextCharNode();
@@ -51,12 +57,11 @@ class TestRunner {
 
     static void clearScreen();
 
-    WordSet word_set{};
+    WordSet word_set;
+
     UVec2 cursor_pos{1, 1};
     uint32_t curr_char = 0;
     uint32_t curr_word = 0;
-
-    Milliseconds duration{};
 };
 
 #endif // MONKEYCODE_TESTRUNNER_HPP

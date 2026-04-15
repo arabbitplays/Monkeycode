@@ -23,10 +23,13 @@ char getch() {
     return c;
 }
 
-TestRunner::TestRunner(const std::string &test_text) { initCharSet(test_text); }
+TestResult TestRunner::run(const std::string &test_string) {
+    initWordSet(test_string);
+    resetCursors();
 
-void TestRunner::run() {
     auto start = std::chrono::high_resolution_clock::now();
+    uint32_t correct_pressed_chars = 0;
+    uint32_t wrong_pressed_chars = 0;
 
     while (curr_word != word_set.size() - 1 ||
            curr_char != word_set[word_set.size() - 1].char_nodes.size()) {
@@ -41,6 +44,7 @@ void TestRunner::run() {
             currCharNode.state = CORRECT;
             currCharNode.written_c = c;
             nextCharNode();
+            correct_pressed_chars++;
         } else if (c == 127 || c == '\b') {
             prevCharNode();
             if (getCurrCharNode().state == OVERFLOW) {
@@ -51,6 +55,7 @@ void TestRunner::run() {
                 node.state = UNWRITTEN;
             }
         } else {
+            wrong_pressed_chars++;
             if (c == ' ') {
                 moveToNextWord();
             } else if (c == '\n') {
@@ -71,9 +76,18 @@ void TestRunner::run() {
     std::cout << "\n\n" << std::endl;
 
     auto end = std::chrono::high_resolution_clock::now();
-    duration =
+    Milliseconds duration =
         std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    float accuracy = static_cast<float>(correct_pressed_chars) / static_cast<float>(correct_pressed_chars + wrong_pressed_chars);
+    return { word_set, duration, accuracy };
 }
+
+void TestRunner::resetCursors() {
+    cursor_pos = {1, 1};
+    curr_char = 0;
+    curr_word = 0;
+}
+
 
 void TestRunner::refreshText() {
     clearScreen();
@@ -146,7 +160,7 @@ void TestRunner::moveBack() {
     }
 }
 
-void TestRunner::initCharSet(const std::string &test_text) {
+void TestRunner::initWordSet(const std::string &test_text) {
     word_set.push_back({{}, {}});
     for (const auto &c : test_text) {
         if (c == ' ' || c == '\n') {
@@ -206,7 +220,3 @@ void TestRunner::printCharNode(const CharNode &node) {
 }
 
 void TestRunner::clearScreen() { std::cout << "\033[2J\033[H" << std::flush; }
-
-WordSet TestRunner::getWordSet() { return word_set; }
-
-Milliseconds TestRunner::getDuration() { return duration; }

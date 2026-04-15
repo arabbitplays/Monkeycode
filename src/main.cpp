@@ -3,6 +3,6 @@
 int main(int argc, char *argv[]) {
     AppController app;
 
-    // app.executeTest();
+    app.executeTest();
     app.renderHistoryAnalysis();
 }

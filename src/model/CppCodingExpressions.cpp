@@ -74,7 +74,7 @@ std::string StartExpression::eval() {
     RNG rng{};
 
     std::string result;
-    for (uint32_t i = 0; i < 20; i++) {
+    for (uint32_t i = 0; i < 1; i++) {
         std::shared_ptr<Expression> expr = generator.generateExpression(rng);
         result += expr->eval() + "\n";
     }
