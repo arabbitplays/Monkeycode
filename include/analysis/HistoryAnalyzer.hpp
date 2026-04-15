@@ -7,7 +7,9 @@ class HistoryAnalyzer {
     public:
     HistoryAnalyzer() = default;
 
-    GraphHandle getCpmGraph(std::shared_ptr<TestHistory> test_history, uint32_t average_count = 1);
+    GraphHandle getCpmGraph(std::shared_ptr<TestHistory> test_history);
+    GraphHandle getAverageGraph(GraphHandle graph, uint32_t average_count);
+    GraphHandle getMaxGraph(GraphHandle graph);
 };
 
 #endif // MONKEYCODE_HISTORYANALYZER_HPP

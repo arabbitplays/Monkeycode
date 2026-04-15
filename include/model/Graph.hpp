@@ -9,7 +9,7 @@
 
 struct Graph {
     std::string title;
-    std::vector<IVec2> points;
+    std::vector<Vec2> points;
 
     Vec2 getExtent() {
         Vec2 min, max;

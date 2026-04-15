@@ -12,12 +12,25 @@ enum GraphRenderMode {
     LINES = 1,
     BOX_LINES = 2,
 };
+
+enum PaletteColor {
+    PRIMARY,
+    PRIMARY_DARK,
+    SECONDARY,
+    SECONDARY_DARK,
+    BACKGROUND,
+};
+
 class GraphRenderer {
   public:
     GraphRenderer(const IVec2 &canvas_size);
 
-    void renderGraph(const GraphHandle &graph, GraphRenderMode mode);
-    std::vector<Vec2> convertGraphPointsToCanvasSpace(const GraphHandle &graph);
+    void renderGraph(const GraphHandle &graph, GraphRenderMode mode,
+                     PaletteColor color);
+    void renderGraph(const GraphHandle &graph, GraphRenderMode mode,
+                     Vec2 graph_extent, PaletteColor color);
+    std::vector<Vec2> convertGraphPointsToCanvasSpace(const GraphHandle &graph,
+                                                      Vec2 graph_extent);
     void outputCanvas(const std::filesystem::path &output_path);
     IVec2 asIVec2(Vec2 v);
     Vec2 asVec2(IVec2 v);
@@ -27,6 +40,8 @@ class GraphRenderer {
     void renderLine(const RenderLine &line);
     void renderDot(const Vec2 &pos, const Color &color);
     IVec2 clampToCanvas(IVec2 point);
+
+    Color getPaletteColor(const PaletteColor &color);
 
     CanvasHandle canvas;
 

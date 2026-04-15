@@ -37,9 +37,14 @@ void AppController::renderHistoryAnalysis() {
 
     HistoryAnalyzer history_analyzer{};
     GraphHandle graph = history_analyzer.getCpmGraph(history);
+    GraphHandle maxGraph = history_analyzer.getMaxGraph(graph);
+    GraphHandle average_10 = history_analyzer.getAverageGraph(graph, 10);
+    GraphHandle average_100 = history_analyzer.getAverageGraph(graph, 100);
 
     GraphRenderer renderer({1000, 600});
-    renderer.renderGraph(graph, BOX_LINES);
-    renderer.renderGraph(graph, POINTS);
+    renderer.renderGraph(maxGraph, BOX_LINES, graph->getExtent(), SECONDARY_DARK );
+    renderer.renderGraph(average_10, LINES, graph->getExtent(), PRIMARY_DARK);
+    renderer.renderGraph(average_100, LINES, graph->getExtent(), PRIMARY);
+    renderer.renderGraph(graph, POINTS, SECONDARY);
     renderer.outputCanvas(".");
 }

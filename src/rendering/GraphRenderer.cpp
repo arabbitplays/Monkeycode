@@ -7,46 +7,52 @@
 #include <cmath>
 
 GraphRenderer::GraphRenderer(const IVec2 &canvas_size) {
-    canvas = std::make_shared<Canvas>(canvas_size, Vec3(0.2f));
+    canvas = std::make_shared<Canvas>(canvas_size, getPaletteColor(BACKGROUND));
 }
 
-void GraphRenderer::renderGraph(const GraphHandle &graph,
-                                GraphRenderMode mode) {
-    std::vector<Vec2> points = convertGraphPointsToCanvasSpace(graph);
+void GraphRenderer::renderGraph(const GraphHandle &graph, GraphRenderMode mode,
+                                PaletteColor color) {
+    renderGraph(graph, mode, graph->getExtent(), color);
+}
+
+void GraphRenderer::renderGraph(const GraphHandle &graph, GraphRenderMode mode,
+                                Vec2 graph_extent, PaletteColor color) {
+    std::vector<Vec2> points = convertGraphPointsToCanvasSpace(graph, graph_extent);
 
     switch (mode) {
     case POINTS:
         for (uint32_t i = 0; i < points.size(); i++) {
-            RenderPoint point = {points[i], 3, primary_light_color};
+            RenderPoint point = {points[i], 3, getPaletteColor(color)};
             renderPoint(point);
         }
         break;
     case LINES:
         for (uint32_t i = 0; i < points.size() - 1; i++) {
-            RenderLine line = {points[i], points[i + 1], 1, primary_dark_color};
+            RenderLine line = {points[i], points[i + 1], 1, getPaletteColor(color)};
             renderLine(line);
         }
         break;
     case BOX_LINES:
         for (uint32_t i = 0; i < points.size() - 1; i++) {
-            RenderLine horiz_line = {points[i], Vec2{points[i + 1].x, points[i].y}, 1, secondary_dark_color};
+            RenderLine horiz_line = {points[i], Vec2{points[i + 1].x, points[i].y}, 1, getPaletteColor(color)};
             renderLine(horiz_line);
-            RenderLine vert_line = {Vec2(points[i + 1].x, points[i].y), points[i + 1], 1, secondary_dark_color};
+            RenderLine vert_line = {Vec2(points[i + 1].x, points[i].y), points[i + 1], 1, getPaletteColor(color)};
             renderLine(vert_line);
         }
         break;
     }
 }
 
+
 std::vector<Vec2>
-GraphRenderer::convertGraphPointsToCanvasSpace(const GraphHandle &graph) {
+GraphRenderer::convertGraphPointsToCanvasSpace(const GraphHandle &graph, Vec2 graph_extent) {
     Vec2 margin(50.0f);
     std::vector<Vec2> canvas_points{};
     canvas_points.reserve(graph->points.size());
-    Frame frame{Vec2(margin), graph->getExtent()};
+    Frame frame{Vec2(margin), graph_extent};
     for (const auto &point : graph->points) {
         canvas_points.push_back(frame.convert(
-            asVec2(point), asVec2(canvas->extent) - (2 * margin)));
+            point, asVec2(canvas->extent) - (2 * margin)));
     }
     return canvas_points;
 }
@@ -108,6 +114,26 @@ void GraphRenderer::renderDot(const Vec2 &pos, const Color &color) {
 IVec2 GraphRenderer::clampToCanvas(IVec2 point) {
     return IVec2::Clamp(point, {0, 0},
                         {canvas->extent.x - 1, canvas->extent.y - 1});
+}
+
+Color GraphRenderer::getPaletteColor(const PaletteColor &color) {
+    switch (color) {
+    case PRIMARY:
+        return primary_light_color;
+        break;
+    case PRIMARY_DARK:
+        return primary_dark_color;
+        break;
+    case SECONDARY:
+        return secondary_light_color;
+        break;
+    case SECONDARY_DARK:
+        return secondary_dark_color;
+        break;
+    case BACKGROUND:
+        return {0.2f};
+        break;
+    }
 }
 
 void GraphRenderer::outputCanvas(const std::filesystem::path &output_path) {
