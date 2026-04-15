@@ -12,7 +12,7 @@ class AppController {
 private:
     void init();
 
-    std::filesystem::path history_file;
+    std::filesystem::path history_dir;
 };
 
 

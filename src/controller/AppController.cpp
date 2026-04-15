@@ -9,13 +9,9 @@
 #include "rendering/GraphRenderer.hpp"
 #include "runner/TestRunner.hpp"
 
-AppController::AppController() {
-    init();
-}
+AppController::AppController() { init(); }
 
-void AppController::init() {
-    history_file = "../resources/history.csv";
-}
+void AppController::init() { history_dir = "../resources/history/"; }
 
 void AppController::executeTest() {
     std::shared_ptr<Expression> start = std::make_shared<StartExpression>();
@@ -24,14 +20,15 @@ void AppController::executeTest() {
     TestResult result = runner.run(generated_text);
 
     TestReportCreator test_report_creator{};
-    std::shared_ptr<Report> test_report = test_report_creator.createReport(result);
+    std::shared_ptr<Report> test_report =
+        test_report_creator.createReport(result);
 
-    ReportPrinter printer{};
+    ReportPrinter printer(history_dir);
     printer.printTestReport(test_report);
-    printer.storeTestResult(history_file, test_report);
+    printer.storeTestReport(test_report);
 }
 void AppController::renderHistoryAnalysis() {
-    TestHistoryLoader loader(history_file);
+    TestHistoryLoader loader(history_dir);
     std::shared_ptr<TestHistory> history = loader.load();
 
     HistoryAnalyzer history_analyzer{};
@@ -41,7 +38,8 @@ void AppController::renderHistoryAnalysis() {
     GraphHandle average_100 = history_analyzer.getAverageGraph(graph, 100);
 
     GraphRenderer renderer({1000, 600});
-    renderer.renderGraph(maxGraph, BOX_LINES, graph->getExtent(), SECONDARY_DARK );
+    renderer.renderGraph(maxGraph, BOX_LINES, graph->getExtent(),
+                         SECONDARY_DARK);
     renderer.renderGraph(average_10, LINES, graph->getExtent(), PRIMARY_DARK);
     renderer.renderGraph(average_100, LINES, graph->getExtent(), PRIMARY);
     renderer.renderGraph(graph, POINTS, SECONDARY);

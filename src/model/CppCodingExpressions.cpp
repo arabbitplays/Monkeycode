@@ -8,8 +8,8 @@ std::string VariableNameLiteral::eval() {
     uint32_t N = rng.getUInt(1, 3);
     CaseStyle style = StringGenerationUtil::randomCaseStyle(rng);
 
-    std::string result = "";
-    for (int i = 0; i < N; ++i) {
+    std::string result;
+    for (uint32_t i = 0; i < N; ++i) {
         std::string next_word = StringGenerationUtil::randomWord(rng);
         switch (style) {
         case SNAKE_CASE:
@@ -30,6 +30,8 @@ std::string VariableNameLiteral::eval() {
         case UPPER_CAMEL_CASE:
             result += StringUtil::capitalize(next_word);
             break;
+        case COUNT_HELPER:
+            break;
         }
     }
 
@@ -46,9 +48,9 @@ std::string EquationExpression::eval() {
     RNG rng{};
     uint32_t N = rng.getUInt(2, 4);
 
-    std::string result = "";
-    for (int i = 0; i < N; ++i) {
-        std::shared_ptr<Expression> next_literal =
+    std::string result;
+    for (uint32_t i = 0; i < N; ++i) {
+        const std::shared_ptr<Expression> next_literal =
             generator.generateLiteral(rng);
         std::string symbol = StringGenerationUtil::randomMathSymbol(rng);
 

@@ -25,10 +25,10 @@ class StringGenerationUtil {
 
     static std::string randomNDigitString(RNG &rng, uint32_t N) {
         std::string result;
-        result += char('0' + rng.getUInt(1, 9));
+        result += static_cast<char>('0' + rng.getUInt(1, 9));
 
-        for (int i = 1; i < N; ++i) {
-            result += char('0' + rng.getUInt(9));
+        for (uint32_t i = 1; i < N; ++i) {
+            result += static_cast<char>('0' + rng.getUInt(9));
         }
 
         return result;

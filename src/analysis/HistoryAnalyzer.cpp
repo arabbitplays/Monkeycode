@@ -1,13 +1,19 @@
 #include "../../include/analysis/HistoryAnalyzer.hpp"
 
 GraphHandle
-HistoryAnalyzer::getCpmGraph(std::shared_ptr<TestHistory> test_history) {
+HistoryAnalyzer::getCpmGraph(const std::shared_ptr<TestHistory> &test_history) {
+    std::vector<ReportDto> reports =
+        test_history->reports.size() > REPORT_COUNT_TO_GRAPH
+            ? std::vector<ReportDto>(test_history->reports.end() -
+                                         REPORT_COUNT_TO_GRAPH,
+                                     test_history->reports.end())
+            : test_history->reports;
 
     GraphHandle graph = std::make_shared<Graph>();
-    graph->points.reserve(test_history->reports.size());
+    graph->points.reserve(reports.size());
 
     uint32_t x = 0;
-    for (const auto& report : test_history->reports) {
+    for (const auto &report : reports) {
         graph->points.emplace_back(x, report.cpm);
         x++;
     }
@@ -15,7 +21,8 @@ HistoryAnalyzer::getCpmGraph(std::shared_ptr<TestHistory> test_history) {
     return graph;
 }
 
-GraphHandle HistoryAnalyzer::getAverageGraph(GraphHandle graph, uint32_t average_count) {
+GraphHandle HistoryAnalyzer::getAverageGraph(GraphHandle graph,
+                                             uint32_t average_count) {
     GraphHandle average_graph = std::make_shared<Graph>();
     average_graph->points.reserve(graph->points.size());
 
@@ -38,12 +45,13 @@ GraphHandle HistoryAnalyzer::getMaxGraph(GraphHandle graph) {
     GraphHandle maxGraph = std::make_shared<Graph>();
     float curr_max = graph->points[0].y;
     maxGraph->points.push_back(graph->points[0]);
-    for (const auto point : graph->points) {
+    for (const auto& point : graph->points) {
         if (point.y > curr_max) {
             curr_max = point.y;
             maxGraph->points.push_back(point);
         }
     }
-    maxGraph->points.emplace_back(graph->points[graph->points.size() - 1].x, curr_max);
+    maxGraph->points.emplace_back(graph->points[graph->points.size() - 1].x,
+                                  curr_max);
     return maxGraph;
 }

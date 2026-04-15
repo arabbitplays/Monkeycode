@@ -11,7 +11,7 @@ class TestHistoryLoader {
     std::shared_ptr<TestHistory> load() const;
 
   private:
-    std::filesystem::path history_file_path;
+    std::filesystem::path history_dir;
 };
 
 #endif // MONKEYCODE_TESTHISTORYLOADER_HPP

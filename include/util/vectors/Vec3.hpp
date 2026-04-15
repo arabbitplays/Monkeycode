@@ -16,24 +16,21 @@ struct Vec3
     Vec3(float x, float y, float z)
         : x(x), y(y), z(z) {}
 
-    Vec3(const Vec3& v)
-        : x(v.x), y(v.y), z(v.z) {}
-
-    Vec3(float x) : x(x), y(x), z(x) {}
+    explicit Vec3(const float x) : x(x), y(x), z(x) {}
 
     friend Vec3 operator+(const Vec3& a, const Vec3& b)
     {
-        return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
+        return {a.x + b.x, a.y + b.y, a.z + b.z};
     }
 
     friend Vec3 operator-(const Vec3& a, const Vec3& b)
     {
-        return Vec3(a.x - b.x, a.y - b.y, a.z - b.z);
+        return {a.x - b.x, a.y - b.y, a.z - b.z};
     }
 
     friend Vec3 operator*(const Vec3& v, float s)
     {
-        return Vec3(v.x * s, v.y * s, v.z * s);
+        return {v.x * s, v.y * s, v.z * s};
     }
 
     friend Vec3 operator*(float s, const Vec3& v)
@@ -43,7 +40,7 @@ struct Vec3
 
     friend Vec3 operator/(const Vec3& v, float s)
     {
-        return Vec3(v.x / s, v.y / s, v.z / s);
+        return {v.x / s, v.y / s, v.z / s};
     }
 
     static Vec3 Clamp(const Vec3& v, const Vec3& min, const Vec3& max)

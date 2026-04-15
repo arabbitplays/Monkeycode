@@ -8,14 +8,18 @@
 
 class ReportPrinter {
   public:
-    ReportPrinter() = default;
+    explicit ReportPrinter(std::filesystem::path storage_path);
 
     static void printTestReport(const std::shared_ptr<Report> &report);
-    static void storeTestResult(const std::filesystem::path &storage_file,
-                                const std::shared_ptr<Report> &report);
+    void storeTestReport(const std::shared_ptr<Report> &report);
+    void writeHeaderLine(std::ofstream &file);
 
   private:
-    static void writeReportDto(std::ofstream file, ReportDto &dto);
+    void writeReportDto(std::ofstream file, ReportDto &dto);
+    std::ofstream getCurrHistoryFile();
+
+    const size_t MAX_HISTORY_FILE_LINES = 501;
+    std::filesystem::path storage_path;
 };
 
 #endif // MONKEYCODE_REPORTPRINTER_HPP

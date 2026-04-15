@@ -12,27 +12,24 @@ struct Vec2
     Vec2()
         : x(0.0f), y(0.0f) {}
 
-    Vec2(float x, float y)
+    Vec2(const float x, const float y)
         : x(x), y(y) {}
 
-    Vec2(const Vec2& v)
-        : x(v.x), y(v.y) {}
-
-    Vec2(float x) : x(x), y(x) {}
+    explicit Vec2(const float x) : x(x), y(x) {}
 
     friend Vec2 operator+(const Vec2& a, const Vec2& b)
     {
-        return Vec2(a.x + b.x, a.y + b.y);
+        return {a.x + b.x, a.y + b.y};
     }
 
     friend Vec2 operator-(const Vec2& a, const Vec2& b)
     {
-        return Vec2(a.x - b.x, a.y - b.y);
+        return {a.x - b.x, a.y - b.y};
     }
 
     friend Vec2 operator*(const Vec2& v, float s)
     {
-        return Vec2(v.x * s, v.y * s);
+        return {v.x * s, v.y * s};
     }
 
     friend Vec2 operator*(float s, const Vec2& v)
@@ -42,7 +39,7 @@ struct Vec2
 
     friend Vec2 operator/(const Vec2& v, float s)
     {
-        return Vec2(v.x / s, v.y / s);
+        return {v.x / s, v.y / s};
     }
 
     static Vec2 Clamp(const Vec2& v, const Vec2& min, const Vec2& max)

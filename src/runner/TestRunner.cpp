@@ -16,7 +16,10 @@ char getch() {
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
     char c;
-    read(STDIN_FILENO, &c, 1);
+    size_t read_count = read(STDIN_FILENO, &c, 1);
+    if (read_count == 0) {
+        throw std::runtime_error("Failed to read from stdin");
+    }
 
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // restore
 
@@ -164,10 +167,10 @@ void TestRunner::initWordSet(const std::string &test_text) {
     word_set.push_back({{}, {}});
     for (const auto &c : test_text) {
         if (c == ' ' || c == '\n') {
-            word_set[word_set.size() - 1].last_char = {c, UNWRITTEN};
+            word_set[word_set.size() - 1].last_char = {c, c, UNWRITTEN};
             word_set.push_back({{}, {}});
         } else {
-            word_set[word_set.size() - 1].char_nodes.push_back({c, UNWRITTEN});
+            word_set[word_set.size() - 1].char_nodes.push_back({c, c, UNWRITTEN});
         }
     }
 }
