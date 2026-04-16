@@ -131,6 +131,10 @@ Color GraphRenderer::getPaletteColor(const PaletteColor &color) {
         return secondary_light_color;
     case SECONDARY_DARK:
         return secondary_dark_color;
+    case TERTIARY:
+        return Vec3(0.6f);
+    case TERTIARY_DARK:
+        return Vec3(0.4f);
     case BACKGROUND:
         return Vec3(0.2f);
     }

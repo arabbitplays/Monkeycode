@@ -1,13 +1,42 @@
 #include "../../include/analysis/HistoryAnalyzer.hpp"
 
-GraphHandle
-HistoryAnalyzer::getCpmGraph(const std::shared_ptr<TestHistory> &test_history) {
+#include "rendering/GraphRenderer.hpp"
+#include "rendering/util/GraphUtil.hpp"
+
+void HistoryAnalyzer::generateAnalysis(const std::shared_ptr<TestHistory> &test_history) {
     std::vector<ReportDto> reports =
         test_history->reports.size() > REPORT_COUNT_TO_GRAPH
             ? std::vector<ReportDto>(test_history->reports.end() -
                                          REPORT_COUNT_TO_GRAPH,
                                      test_history->reports.end())
             : test_history->reports;
+
+    GraphHandle cpm = getCpmGraph(reports);
+    GraphHandle max_cpm = GraphUtil::getMaxGraph(cpm);
+    GraphHandle cpm_average_10 = GraphUtil::getAverageGraph(cpm, 10);
+    GraphHandle cpm_average_100 = GraphUtil::getAverageGraph(cpm, 100);
+
+    GraphHandle error = getAccuracyGraph(reports);
+    GraphHandle min_error = GraphUtil::getMinGraph(error);
+    GraphHandle error_average_10 = GraphUtil::getAverageGraph(error, 10);
+
+    GraphRenderer renderer({1000, 600});
+    renderer.renderGraph(max_cpm, BOX_LINES, cpm->getExtent(),
+                         SECONDARY_DARK);
+    renderer.renderGraph(cpm_average_10, LINES, cpm->getExtent(), PRIMARY_DARK);
+    renderer.renderGraph(cpm_average_100, LINES, cpm->getExtent(), PRIMARY);
+
+    Vec2 error_graph_extent = error->getExtent();
+    error_graph_extent.y = 1;
+    renderer.renderGraph(min_error, BOX_LINES, error_graph_extent, TERTIARY);
+    renderer.renderGraph(error_average_10, LINES, error_graph_extent, TERTIARY_DARK);
+
+    renderer.renderGraph(cpm, POINTS, SECONDARY);
+    renderer.outputCanvas(".");
+}
+
+GraphHandle
+HistoryAnalyzer::getCpmGraph(const std::vector<ReportDto> &reports) {
 
     GraphHandle graph = std::make_shared<Graph>();
     graph->points.reserve(reports.size());
@@ -21,37 +50,17 @@ HistoryAnalyzer::getCpmGraph(const std::shared_ptr<TestHistory> &test_history) {
     return graph;
 }
 
-GraphHandle HistoryAnalyzer::getAverageGraph(GraphHandle graph,
-                                             uint32_t average_count) {
-    GraphHandle average_graph = std::make_shared<Graph>();
-    average_graph->points.reserve(graph->points.size());
+GraphHandle HistoryAnalyzer::getAccuracyGraph(
+    const std::vector<ReportDto> &reports) {
 
-    for (uint32_t i = 0; i < graph->points.size(); i++) {
-        float sum = 0;
-        uint32_t denom = std::min(i + 1, average_count);
-        for (uint32_t j = 0; j < average_count; j++) {
-            if (j > i) {
-                break;
-            }
-            sum += graph->points[i - j].y;
-        }
-        average_graph->points.emplace_back(i, sum / static_cast<float>(denom));
+    GraphHandle graph = std::make_shared<Graph>();
+    graph->points.reserve(reports.size());
+
+    uint32_t x = 0;
+    for (const auto &report : reports) {
+        graph->points.emplace_back(x, 1.0f - report.accuracy);
+        x++;
     }
 
-    return average_graph;
-}
-
-GraphHandle HistoryAnalyzer::getMaxGraph(GraphHandle graph) {
-    GraphHandle maxGraph = std::make_shared<Graph>();
-    float curr_max = graph->points[0].y;
-    maxGraph->points.push_back(graph->points[0]);
-    for (const auto& point : graph->points) {
-        if (point.y > curr_max) {
-            curr_max = point.y;
-            maxGraph->points.push_back(point);
-        }
-    }
-    maxGraph->points.emplace_back(graph->points[graph->points.size() - 1].x,
-                                  curr_max);
-    return maxGraph;
+    return graph;
 }

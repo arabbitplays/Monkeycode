@@ -7,11 +7,11 @@ class HistoryAnalyzer {
     public:
     HistoryAnalyzer() = default;
 
-    GraphHandle getCpmGraph(const std::shared_ptr<TestHistory> &test_history);
-    GraphHandle getAverageGraph(GraphHandle graph, uint32_t average_count);
-    GraphHandle getMaxGraph(GraphHandle graph);
-
+    void generateAnalysis(const std::shared_ptr<TestHistory> &test_history);
 private:
+    GraphHandle getCpmGraph(const std::vector<ReportDto> &reports);
+    GraphHandle getAccuracyGraph(const std::vector<ReportDto> &reports);
+
     static constexpr uint32_t REPORT_COUNT_TO_GRAPH = 200;
 };
 

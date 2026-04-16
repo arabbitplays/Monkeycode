@@ -41,6 +41,9 @@ TestResult TestRunner::run(const std::string &test_string) {
         adjustCursorPosToCurrChar();
 
         char c = getch();
+        if (c == '\t' || c == '\x1B') { // ignore tab, esc, arrowkeys
+            continue;
+        }
 
         CharNode &currCharNode = getCurrCharNode();
         if (c == currCharNode.c) {
@@ -81,8 +84,10 @@ TestResult TestRunner::run(const std::string &test_string) {
     auto end = std::chrono::high_resolution_clock::now();
     Milliseconds duration =
         std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    float accuracy = static_cast<float>(correct_pressed_chars) / static_cast<float>(correct_pressed_chars + wrong_pressed_chars);
-    return { word_set, duration, accuracy };
+    float accuracy =
+        static_cast<float>(correct_pressed_chars) /
+        static_cast<float>(correct_pressed_chars + wrong_pressed_chars);
+    return {word_set, duration, accuracy};
 }
 
 void TestRunner::resetCursors() {
@@ -90,7 +95,6 @@ void TestRunner::resetCursors() {
     curr_char = 0;
     curr_word = 0;
 }
-
 
 void TestRunner::refreshText() {
     clearScreen();
@@ -170,7 +174,8 @@ void TestRunner::initWordSet(const std::string &test_text) {
             word_set[word_set.size() - 1].last_char = {c, c, UNWRITTEN};
             word_set.push_back({{}, {}});
         } else {
-            word_set[word_set.size() - 1].char_nodes.push_back({c, c, UNWRITTEN});
+            word_set[word_set.size() - 1].char_nodes.push_back(
+                {c, c, UNWRITTEN});
         }
     }
 }

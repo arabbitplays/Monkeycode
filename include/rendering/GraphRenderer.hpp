@@ -18,6 +18,8 @@ enum PaletteColor {
     PRIMARY_DARK,
     SECONDARY,
     SECONDARY_DARK,
+    TERTIARY,
+    TERTIARY_DARK,
     BACKGROUND,
 };
 

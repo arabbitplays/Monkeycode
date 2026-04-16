@@ -18,12 +18,11 @@ void ReportPrinter::printTestReport(const std::shared_ptr<Report> &report) {
     std::cout << "########################\n";
     std::cout << std::endl;
 
-    std::cout << "Correct chars:    " << report->correct_char_count
-              << std::endl;
     std::cout << "Chars per minute: " << report->cpm << std::endl;
-    std::cout << "Extra chars:      " << report->extra_char_count << std::endl;
-
     std::cout << "Accuracy:         " << report->accuracy * 100.0F << "%"
+              << std::endl;
+
+    std::cout << "Correct chars:    " << report->correct_char_count
               << std::endl;
     std::cout << "Extra chars:      " << report->extra_char_count << std::endl;
     std::cout << "Missing chars:    " << report->missing_char_count

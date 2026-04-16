@@ -27,21 +27,11 @@ void AppController::executeTest() {
     printer.printTestReport(test_report);
     printer.storeTestReport(test_report);
 }
+
 void AppController::renderHistoryAnalysis() {
     TestHistoryLoader loader(history_dir);
     std::shared_ptr<TestHistory> history = loader.load();
 
     HistoryAnalyzer history_analyzer{};
-    GraphHandle graph = history_analyzer.getCpmGraph(history);
-    GraphHandle maxGraph = history_analyzer.getMaxGraph(graph);
-    GraphHandle average_10 = history_analyzer.getAverageGraph(graph, 10);
-    GraphHandle average_100 = history_analyzer.getAverageGraph(graph, 100);
-
-    GraphRenderer renderer({1000, 600});
-    renderer.renderGraph(maxGraph, BOX_LINES, graph->getExtent(),
-                         SECONDARY_DARK);
-    renderer.renderGraph(average_10, LINES, graph->getExtent(), PRIMARY_DARK);
-    renderer.renderGraph(average_100, LINES, graph->getExtent(), PRIMARY);
-    renderer.renderGraph(graph, POINTS, SECONDARY);
-    renderer.outputCanvas(".");
+    history_analyzer.generateAnalysis(history);
 }

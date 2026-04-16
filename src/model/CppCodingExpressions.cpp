@@ -40,7 +40,17 @@ std::string VariableNameLiteral::eval() {
 
 std::string NumberLiteral::eval() {
     RNG rng{};
-    return StringGenerationUtil::randomNDigitString(rng, rng.getUInt(3, 7));
+
+    std::string first_num =
+        StringGenerationUtil::randomNDigitString(rng, rng.getUInt(2, 5));
+    std::string second_num =
+        StringGenerationUtil::randomNDigitString(rng, rng.getUInt(2, 5));
+
+    if (rng.getUInt(0, 1)) {
+        return first_num + "." + second_num + "f";
+    } else {
+        return first_num + "," + second_num;
+    }
 }
 std::string TypeLiteral::eval() {
     RNG rng{};
