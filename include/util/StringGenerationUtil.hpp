@@ -50,6 +50,14 @@ class StringGenerationUtil {
         return symbols[rng.getUInt(symbols.size() - 1)];
     }
 
+    static std::string randomSpecialSymbol(RNG &rng) {
+        std::vector<std::string> symbols{
+            "\\n", "\\r", "\\t", "@"
+        };
+
+        return symbols[rng.getUInt(symbols.size() - 1)];
+    }
+
     static std::pair<std::string, std::string> randomBracketPair(RNG &rng) {
         std::vector<std::pair<std::string, std::string>> brackets{
             {"{", "}"}, {"(", ")"},   {"[", "]"},

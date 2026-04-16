@@ -6,9 +6,13 @@
 ExpressionGenerator::ExpressionGenerator() {
     addLiteralGenerator([] { return std::make_shared<VariableNameLiteral>(); });
     addLiteralGenerator([] { return std::make_shared<NumberLiteral>(); });
+    addLiteralGenerator([] { return std::make_shared<SpecialSymbolLiteral>(); });
+    addLiteralGenerator([] { return std::make_shared<TypeLiteral>(); });
 
     addGenerator([] { return std::make_shared<EquationExpression>(); });
     addGenerator([] { return std::make_shared<BracketExpression>(); });
+    addGenerator([] { return std::make_shared<PtrExpression>(); });
+    addGenerator([] { return std::make_shared<MacroExpression>(); });
 }
 
 std::shared_ptr<Expression> ExpressionGenerator::generateExpression(RNG &rng) {
